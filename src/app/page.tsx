@@ -23,7 +23,7 @@ export default async function Home() {
   const data: BlogPost[] = await getData();
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-4 mt-5 max-w-7xl mx-auto">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-5 max-w-7xl mx-auto px-2 md:px-0">
       {data.map((post) => (
         <Card key={post.currentSlug} className="py-0">
           <Image
