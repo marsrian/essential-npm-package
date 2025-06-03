@@ -1,12 +1,22 @@
 export interface BlogPost {
     title: string;
     currentSlug: string;
-    image: string;
+    image: {
+    asset: {
+      _ref: string;
+      _type: string;
+    };
+  };
 }
 
-export interface FullBlog {
+export interface fullBlog {
     currentSlug: string;
     title: string;
     body: any;
-    image: string;
+    image: {
+    asset: {
+      _ref: string;
+      _type: string;
+    };
+  };
 }

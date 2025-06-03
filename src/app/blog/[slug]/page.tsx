@@ -1,31 +1,44 @@
-import { FullBlog } from "@/lib/interface";
+import { fullBlog } from "@/lib/interface";
 import { client, urlFor } from "@/lib/sanity";
 import { PortableText } from "next-sanity";
 import Image from "next/image";
 
 export const revalidate = 30;
 
-async function getData(slug: string): Promise<FullBlog> {
+async function getData(slug: string) {
   const query = `
-    *[_type == "blog" && slug.current == $slug]{
+    *[_type == "blog" && slug.current == $slug][0]{
         "currentSlug": slug.current,
         title,
         body,
         image
-    }[0]`;
+    }`;
 
   const data = await client.fetch(query, { slug });
   return data;
 }
 
-interface PageProps {
-  params: {
-    slug: string;
-  };
+export async function generateStaticParams() {
+  const query = `*[_type == "blog"]{"slug": slug.current}`;
+  const slugs = await client.fetch(query);
+  return slugs.map((item: { slug: string }) => ({
+    slug: item.slug,
+  }));
 }
 
-const BlogArticle = async ({ params }: PageProps) => {
-  const data: FullBlog = await getData(params.slug);
+const BlogArticle = async ({ params }: { params: Promise<{ slug: string }> }) => {
+ const { slug } = await params; // Destructure to avoid direct params.slug access
+  if (!slug) {
+    throw new Error("Slug is missing");
+  }
+
+  console.log("Slug:", slug); // Debug log
+  const data: fullBlog = await getData(slug);
+  console.log("Data:", data); // Debug log
+
+  if (!data) {
+    throw new Error("Blog post not found");
+  }
   return (
     <div className="max-w-4xl mx-auto mt-8">
       <h1 className="text-3xl text-center leading-8 font-bold tracking-tight sm:text-4xl">
