@@ -5,8 +5,8 @@ export interface BlogPost {
 }
 
 export interface FullBlog {
-    title: string;
     currentSlug: string;
-    image: string;
+    title: string;
     body: any;
+    image: string;
 }

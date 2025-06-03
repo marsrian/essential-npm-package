@@ -5,20 +5,26 @@ import Image from "next/image";
 
 export const revalidate = 30;
 
-async function getData(slug) {
+async function getData(slug: string): Promise<FullBlog> {
   const query = `
-    *[_type == "blog" && slug.current == "${slug}"]{
+    *[_type == "blog" && slug.current == $slug]{
         "currentSlug": slug.current,
         title,
         body,
         image
     }[0]`;
 
-  const data = await client.fetch(query);
+  const data = await client.fetch(query, { slug });
   return data;
 }
 
-const BlogArticle = async ({ params }: { params: { slug: string } }) => {
+interface PageProps {
+  params: {
+    slug: string;
+  };
+}
+
+const BlogArticle = async ({ params }: PageProps) => {
   const data: FullBlog = await getData(params.slug);
   return (
     <div className="max-w-4xl mx-auto mt-8">
